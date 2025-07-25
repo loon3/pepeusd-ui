@@ -1,5 +1,5 @@
 // src/App.js
-import { useEffect, useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserProvider, Contract, formatUnits, parseUnits } from 'ethers';
 import PepeABI from './abis/PepeUSD.json'
 import USDCABI from './abis/USDC.json'
@@ -11,14 +11,14 @@ const USDC_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
 function Modal({ isOpen, onClose }) {
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
       <div className="bg-white p-8 rounded shadow-lg max-w-lg text-center">
         <h2 className="text-xl font-bold mb-4">What is PepeUSD?</h2>
         <p className="mb-4">PepeUSD is a first of its kind collectible crypto coin with <strong><em>Stable Floor Technology</em></strong>.</p>
         <p className="mb-4">PepeUSD can be minted and redeemed 1:1 with USDC but is limited to a <span className="font-bold">max supply of 420,000</span>.</p>
         <p className="mb-4">The floor price is set at 1 USDC and can never go below it.</p>
         <p className="mb-4">The PepeUSD contract source code is verified and <a href={`https://etherscan.io/address/${PEPEUSD_ADDRESS}#code#F1#L1`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">viewable on Etherscan</a>. The contract has no admin functions or golden keys and is fully decentralized.</p>
-        <button onClick={onClose} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Close</button>
+        <button onClick={onClose} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">I Agree To Use At My Own Risk</button>
       </div>
     </div>
   );
@@ -39,7 +39,7 @@ function App() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [walletStatus, setWalletStatus] = useState('');
 
-  const connectWallet = async () => {
+  const connectWallet = useCallback(async () => {
     if (!window.ethereum) {
       setWalletStatus('No web3 wallet detected. Please install a web3 wallet extension like MetaMask.');
       return;
@@ -57,6 +57,7 @@ function App() {
       const signer = await provider.getSigner();
       setWalletStatus('');
       setWalletAddress(await signer.getAddress());
+      sessionConnected();
 
       const pepeContract = new Contract(PEPEUSD_ADDRESS, PepeABI.abi, signer);
       const usdcContract = new Contract(USDC_ADDRESS, USDCABI.abi, signer);
@@ -66,7 +67,7 @@ function App() {
       setWalletStatus('Error connecting wallet');
       setStatus(`Error connecting wallet: ${error.message}`);
     }
-  };
+  }, []);
 
   const fetchEthBalanceFromAPI = async (address) => {
     try {
@@ -201,9 +202,26 @@ function App() {
     }
   };
 
+  const sessionConnected = () => {
+    sessionStorage.setItem('isConnected', 'true');
+  }
+
+  const termsAgreed = () => {
+    sessionStorage.setItem('termsAgreed', 'true');
+  }
+
   useEffect(() => {
+    console.log('useEffect, connectWallet');
     fetchTotalSupplyFromAPI().then(setTotalSupply);
-  }, []);
+    const checkIfConnected = sessionStorage.getItem('isConnected');
+    if (checkIfConnected === 'true') {
+      connectWallet();
+    }
+    const checkIfTermsAgreed = sessionStorage.getItem('termsAgreed');
+    if (checkIfTermsAgreed !== 'true') {
+      setIsModalOpen(true);
+    }
+  }, [connectWallet]);
 
   useEffect(() => {
     if (walletAddress) fetchBalances();
@@ -222,9 +240,9 @@ function App() {
       {/* Trigger for the modal */}
       <button onClick={() => setIsModalOpen(true)} className="text-blue-500 underline mb-4 pointer-events-auto">What is PepeUSD?</button>
       <div className="pointer-events-auto">
-        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+        <Modal isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); termsAgreed(); }} />
       </div>
-      <div className={`absolute top-4 sm:right-4 z-10 ${isModalOpen ? 'blur-sm' : ''}`}>
+      <div className={`absolute top-4 sm:right-4 z-10`}>
         {!walletAddress ? (
           <button onClick={connectWallet} className="bg-blue-500 text-white text-lg font-semibold px-4 py-2 rounded-lg cursor-pointer">Connect Wallet</button>
         ) : (
@@ -251,7 +269,7 @@ function App() {
          <p className="text-center text-xl text-gray-600 mb-0">Mint and Redeem</p>
          <p className="text-center text-xl font-bold text-gray-600 mb-1">PepeUSD:USD (1:1)</p>
          <p className="text-center text-xs text-gray-600 mb-4">Limited to 420,000 PepeUSD</p>
-         <p className="text-center text-xs text-gray-600 mb-8 font-bold">CA: {PEPEUSD_ADDRESS}</p>
+         <p className="text-center text-xs text-gray-600 mb-8 font-bold">CA: <a href={`https://etherscan.io/address/${PEPEUSD_ADDRESS}`} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-600 underline">{PEPEUSD_ADDRESS}</a></p>
          <p className="text-md text-gray-800 mb-1 text-center">PepeUSD Supply <span className="">({(totalSupply / 420000 * 100).toFixed(2)}&#37; minted)</span>:</p>
          <p className="text-2xl text-gray-800 mb-4 text-center"><span className="font-bold">{Number(totalSupply).toFixed(2)}</span> </p>   
         
@@ -272,7 +290,7 @@ function App() {
                
                 <div className="bg-gray-50 pb-4 px-4 rounded-lg">
                   <h3 className="text-4xl font-semibold">Mint</h3>
-                  <a href={`https://etherscan.io/address/${PEPEUSD_ADDRESS}`} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-600 underline">View PepeUSD Contract</a>
+                
                   <p className="text-sm text-gray-600 my-2">Balance: {balanceUsdc} USDC</p>
                   <div className="flex items-center mb-2">
                     <input
@@ -289,7 +307,7 @@ function App() {
                 </div>
                 <div className="bg-gray-50 pb-4 px-4 rounded-lg">
                   <h3 className="text-4xl font-semibold">Redeem</h3>
-                  <a href={`https://etherscan.io/address/${USDC_ADDRESS}`} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-600 underline">View USDC Contract</a>
+          
                   <p className="text-sm text-gray-600 my-2">Balance: {balancePepe} PepeUSD</p>
                   <div className="flex items-center mb-2">
                   <input
@@ -310,6 +328,11 @@ function App() {
         )}
       </div>
       <div className="text-center text-red-500 mt-4">{walletStatus}</div>
+      <div className="text-center mt-4">
+        <a href="https://github.com/loon3/pepeusd-ui" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+          View on GitHub
+        </a>
+      </div>
     </div>
   );
 }
