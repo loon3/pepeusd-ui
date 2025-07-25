@@ -14,7 +14,7 @@ function Modal({ isOpen, onClose }) {
     <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex justify-center items-center z-50">
       <div className="bg-white p-8 rounded shadow-lg max-w-lg text-center">
         <h2 className="text-xl font-bold mb-4">What is PepeUSD?</h2>
-        <p className="mb-4">PepeUSD is a first of its kind collectible crypto coin with <strong><em>Stable Floor Technology</em></strong>.</p>
+        <p className="mb-4">PepeUSD is a first of its kind collectible token built with <strong><em>Stable Floor Technology</em></strong>.</p>
         <p className="mb-4">PepeUSD can be minted and redeemed 1:1 with USDC but is limited to a <span className="font-bold">max supply of 420,000</span>.</p>
         <p className="mb-4">The floor price is set at 1 USDC and can never go below it.</p>
         <p className="mb-4">The PepeUSD contract source code is verified and <a href={`https://etherscan.io/address/${PEPEUSD_ADDRESS}#code#F1#L1`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">viewable on Etherscan</a>. The contract has no admin functions or golden keys and is fully decentralized.</p>
