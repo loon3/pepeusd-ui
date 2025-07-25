@@ -70,7 +70,7 @@ function App() {
 
   const fetchEthBalanceFromAPI = async (address) => {
     try {
-      const response = await fetch(`https://api.etherscan.io/v2/api?chainid=1&module=account&action=balance&address=${address}&tag=latest&apikey=${process.env.ETHERSCAN_API_KEY}`);
+      const response = await fetch(`https://api.etherscan.io/v2/api?chainid=1&module=account&action=balance&address=${address}&tag=latest&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`);
       const data = await response.json();
       if (data.status === "1") {
         return formatUnits(data.result, 18).slice(0, -14);
@@ -85,7 +85,7 @@ function App() {
 
   const fetchTotalSupplyFromAPI = async () => {
     try {
-      const response = await fetch(`https://api.etherscan.io/v2/api?chainid=1&module=stats&action=tokensupply&contractaddress=${PEPEUSD_ADDRESS}&apikey=${process.env.ETHERSCAN_API_KEY}`);
+      const response = await fetch(`https://api.etherscan.io/v2/api?chainid=1&module=stats&action=tokensupply&contractaddress=${PEPEUSD_ADDRESS}&apikey=${process.env.REACT_APP_ETHERSCAN_API_KEY}`);
       const data = await response.json();
       if (data.status === "1") {
         return formatUnits(data.result, 6);
