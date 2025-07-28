@@ -16,7 +16,7 @@ function Modal({ isOpen, onClose }) {
         <h2 className="text-xl font-bold mb-4">What is PepeUSD?</h2>
         <p className="mb-4">PepeUSD is a first of its kind collectible token built with <strong><em>Stable Floor Technology</em></strong>.</p>
         <p className="mb-4">PepeUSD can be minted and redeemed 1:1 with USDC but is limited to a <span className="font-bold">max supply of 420,000</span>.</p>
-        <p className="mb-4">The floor price is set at 1 USDC and can never go below it.</p>
+        <p className="mb-4">1 PepeUSD will always be <span className="font-bold">worth at least 1 USDC</span>.</p>
         <p className="mb-4">The PepeUSD contract source code is verified and <a href={`https://etherscan.io/address/${PEPEUSD_ADDRESS}#code#F1#L1`} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">viewable on Etherscan</a>. The contract has no admin functions or golden keys and is fully decentralized.</p>
         <button onClick={onClose} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">I Agree To Use At My Own Risk</button>
       </div>
@@ -267,7 +267,7 @@ function App() {
           <img src="PEPEUSD.png" alt="PepeUSD" className="w-64 h-64" />
         </div>
          <p className="text-center text-xl text-gray-600 mb-0">Mint and Redeem</p>
-         <p className="text-center text-xl font-bold text-gray-600 mb-1">PepeUSD:USD (1:1)</p>
+         <p className="text-center text-xl font-bold text-gray-600 mb-1">PepeUSD:USDC (1:1)</p>
          <p className="text-center text-xs text-gray-600 mb-4">Limited to 420,000 PepeUSD</p>
          <p className="text-center text-xs text-gray-600 mb-8 font-bold">CA: <a href={`https://etherscan.io/address/${PEPEUSD_ADDRESS}`} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-600 underline">{PEPEUSD_ADDRESS}</a></p>
          <p className="text-md text-gray-800 mb-1 text-center">PepeUSD Supply <span className="">({(totalSupply / 420000 * 100).toFixed(2)}&#37; minted)</span>:</p>
