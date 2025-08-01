@@ -4,6 +4,7 @@ import { BrowserProvider, Contract, formatUnits, parseUnits } from 'ethers';
 import PepeABI from './abis/PepeUSD.json'
 import USDCABI from './abis/USDC.json'
 import Spinner from './Spinner';
+import SpiralProgress from './spiral';
 
 const PEPEUSD_ADDRESS = "0xed7fd16423Bc19b9143313ac5E4B7F731D714e97";
 const USDC_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
@@ -38,6 +39,7 @@ function App() {
   const [status, setStatus] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [walletStatus, setWalletStatus] = useState('');
+  const [progress, setProgress] = useState(0);
 
   const connectWallet = useCallback(async () => {
     if (!window.ethereum) {
@@ -110,6 +112,7 @@ function App() {
       setBalancePepe(formatUnits(pBal, 6));
       setBalanceUsdc(formatUnits(uBal, 6));
       setTotalSupply(formatUnits(supply, 6));
+      setProgress(Number(totalSupply) / 420000 * 100);
 
       // Fetch ETH balance separately to avoid hanging up other balance fetches
       const eBal = await fetchEthBalanceFromAPI(walletAddress);
@@ -262,16 +265,54 @@ function App() {
       </div>
       <div className={`pt-4 pl-4 pr-4 pb-4 bg-white rounded-lg shadow-md text-center`}>
         <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold mb-4 px-2.5 py-0.5 rounded-full">Ethereum Mainnet</span>
-    
-        <div className="flex justify-center items-center my-4">
-          <img src="PEPEUSD.png" alt="PepeUSD" className="w-64 h-64" />
+        <p className="text-center text-xs text-gray-600 mb-3 font-bold">CA: <a href={`https://etherscan.io/address/${PEPEUSD_ADDRESS}`} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-600 underline">{PEPEUSD_ADDRESS}</a></p>
+        <div className="flex flex-col md:flex-row justify-center items-center my-1">
+            <div className="flex justify-center items-center my-4 w-full md:w-1/2 relative">
+            <SpiralProgress progress={progress} className="z-0" />
+            <img
+              src="PEPEUSD.png"
+              alt="PepeUSD"
+              className={`absolute w-[280px] h-[280px] z-10 ${progress > 99 ? 'opacity-100' : 'opacity-50'}`}
+              style={{
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+              }}
+            />
+          
+            <div
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                textAlign: 'center',
+                color: 'white',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                padding: '10px',
+                borderRadius: '10px',
+                zIndex: 20,
+              }}
+            >
+              PepeUSD Supply:
+              <p className="text-2xl text-white text-center">
+                <span className="font-bold">{Number(totalSupply).toFixed(2)}</span>
+              </p>
+              <p className="text-xs text-white text-center">
+                ({(totalSupply / 420000 * 100).toFixed(2)}&#37; minted)
+              </p>
+            </div>
+          </div>
         </div>
-         <p className="text-center text-xl text-gray-600 mb-0">Mint and Redeem</p>
+        <p className="text-center text-xl text-gray-600 mb-0">Mint and Redeem</p>
          <p className="text-center text-xl font-bold text-gray-600 mb-1">PepeUSD:USDC (1:1)</p>
          <p className="text-center text-xs text-gray-600 mb-4">Limited to 420,000 PepeUSD</p>
-         <p className="text-center text-xs text-gray-600 mb-8 font-bold">CA: <a href={`https://etherscan.io/address/${PEPEUSD_ADDRESS}`} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-600 underline">{PEPEUSD_ADDRESS}</a></p>
-         <p className="text-md text-gray-800 mb-1 text-center">PepeUSD Supply <span className="">({(totalSupply / 420000 * 100).toFixed(2)}&#37; minted)</span>:</p>
-         <p className="text-2xl text-gray-800 mb-4 text-center"><span className="font-bold">{Number(totalSupply).toFixed(2)}</span> </p>   
+         
+         <div className="text-center mt-8 mb-10">
+        <a href="https://app.uniswap.org/swap?outputCurrency=0xed7fd16423Bc19b9143313ac5E4B7F731D714e97&inputCurrency=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&chain=ethereum" target="_blank" rel="noopener noreferrer" className="bg-[#FF37C7] text-white text-lg font-semibold px-4 py-2 rounded-lg cursor-pointer">
+          Buy & Sell on Uniswap
+        </a>
+      </div>
         
         
         {!walletAddress ? (
