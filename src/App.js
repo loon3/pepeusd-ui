@@ -271,7 +271,12 @@ function App() {
          <p className="text-center text-xs text-gray-600 mb-4">Limited to 420,000 PepeUSD</p>
          <p className="text-center text-xs text-gray-600 mb-8 font-bold">CA: <a href={`https://etherscan.io/address/${PEPEUSD_ADDRESS}`} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-600 underline">{PEPEUSD_ADDRESS}</a></p>
          <p className="text-md text-gray-800 mb-1 text-center">PepeUSD Supply <span className="">({(totalSupply / 420000 * 100).toFixed(2)}&#37; minted)</span>:</p>
-         <p className="text-2xl text-gray-800 mb-4 text-center"><span className="font-bold">{Number(totalSupply).toFixed(2)}</span> </p>   
+         <p className="text-2xl text-gray-800 mb-4 text-center"><span className="font-bold">{Number(totalSupply).toFixed(2)}</span> </p>  
+         <div className="text-center mt-8 mb-10">
+        <a href="https://app.uniswap.org/swap?outputCurrency=0xed7fd16423Bc19b9143313ac5E4B7F731D714e97&inputCurrency=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&chain=ethereum" target="_blank" rel="noopener noreferrer" className="bg-[#FF37C7] text-white text-lg font-semibold px-4 py-2 rounded-lg cursor-pointer">
+          Buy & Sell on Uniswap
+        </a>
+      </div> 
         
         
         {!walletAddress ? (
