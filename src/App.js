@@ -333,9 +333,15 @@ function App() {
         )}
       </div>
       <div className="text-center text-red-500 mt-4">{walletStatus}</div>
-      <div className="text-center mt-4">
-        <a href="https://github.com/loon3/pepeusd-ui" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
-          View on GitHub
+      <div className="text-center mt-4 flex justify-center mt-2">
+        <a href="https://github.com/loon3/pepeusd-ui" target="_blank" rel="noopener noreferrer" className="mx-2">
+          <img src="github.svg" alt="GitHub" className="w-12 h-12 inline" />
+        </a>
+        <a href="https://twitter.com/pepeusdbot" target="_blank" rel="noopener noreferrer" className="mx-2">
+          <img src="twitter.svg" alt="Twitter" className="w-12 h-12 inline" />
+        </a>
+        <a href="https://t.me/stablepepeusd" target="_blank" rel="noopener noreferrer" className="mx-2">
+          <img src="telegram.svg" alt="Telegram" className="w-12 h-12 inline" />
         </a>
       </div>
     </div>
