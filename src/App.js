@@ -35,9 +35,11 @@ function App() {
   const [totalSupply, setTotalSupply] = useState('0');
   const [mintAmount, setMintAmount] = useState('');
   const [redeemAmount, setRedeemAmount] = useState('');
+  const [stakeAmount, setStakeAmount] = useState('');
   const [status, setStatus] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [walletStatus, setWalletStatus] = useState('');
+  const [stakeAPR, setStakeAPR] = useState('7');
 
   const connectWallet = useCallback(async () => {
     if (!window.ethereum) {
@@ -202,6 +204,26 @@ function App() {
     }
   };
 
+  const stake = async () => {
+    try {
+      if (!checkIfValidAmount(stakeAmount, 'pepe')) {
+        setStatus('Invalid amount');
+        return;
+      }
+      setIsProcessing(true);
+      setStatus('Preparing to stake...');
+      // TODO: Add staking functionality here
+      setStatus('✅ Stake functionality coming soon!');
+      setTimeout(() => setStatus(''), 3000);
+    } catch (error) {
+      const errorMessage = error.reason || error.message.split('(')[0].trim();
+      setStatus(`Stake failed: ${errorMessage}`);
+    } finally {
+      setIsProcessing(false);
+      setStakeAmount('');
+    }
+  };
+
   const sessionConnected = () => {
     sessionStorage.setItem('isConnected', 'true');
   }
@@ -261,77 +283,181 @@ function App() {
         )}
       </div>
       <div className={`pt-4 pl-4 pr-4 pb-4 bg-white rounded-lg shadow-md text-center`}>
-        <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold mb-4 px-2.5 py-0.5 rounded-full">Ethereum Mainnet</span>
+
     
-        <div className="flex justify-center items-center my-4">
-          <img src="PEPEUSD.png" alt="PepeUSD" className="w-64 h-64" />
-        </div>
-         <p className="text-center text-xl text-gray-600 mb-0">Mint and Redeem</p>
-         <p className="text-center text-xl font-bold text-gray-600 mb-1">PepeUSD:USDC (1:1)</p>
-         <p className="text-center text-xs text-gray-600 mb-4">Limited to 420,000 PepeUSD</p>
-         <p className="text-center text-xs text-gray-600 mb-8 font-bold">CA: <a href={`https://etherscan.io/address/${PEPEUSD_ADDRESS}`} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-600 underline">{PEPEUSD_ADDRESS}</a></p>
-         <p className="text-md text-gray-800 mb-1 text-center">PepeUSD Supply <span className="">({(totalSupply / 420000 * 100).toFixed(2)}&#37; minted)</span>:</p>
-         <p className="text-2xl text-gray-800 mb-4 text-center"><span className="font-bold">{Number(totalSupply).toFixed(2)}</span> </p>  
-         <div className="text-center mt-8 mb-10">
-        <a href="https://app.uniswap.org/swap?outputCurrency=0xed7fd16423Bc19b9143313ac5E4B7F731D714e97&inputCurrency=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&chain=ethereum" target="_blank" rel="noopener noreferrer" className="bg-[#FF37C7] text-white text-lg font-semibold px-4 py-2 rounded-lg cursor-pointer">
-          Buy & Sell on Uniswap
-        </a>
-      </div> 
-        
-        
-        {!walletAddress ? (
-          <></>
-        ) : (
-          <>
-            
-            <div className="relative">
-              {status && (
-                <div className="absolute z-20 flex flex-col justify-center items-center h-full w-full bg-gray-800 bg-opacity-80 text-white rounded-lg">
-                  <p>{status}</p>
-                  {isProcessing ? (<Spinner />) : (<div className="text-white underline cursor-pointer mt-4" onClick={() => setStatus('')}>Click to continue...</div>)}
-                </div>
-              )}
-              <div className={`grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 bg-gray-50 p-4 rounded-lg w-full h-full ${status ? 'blur-sm' : ''}`}>
-               
-                <div className="bg-gray-50 pb-4 px-4 rounded-lg">
-                  <h3 className="text-4xl font-semibold">Mint</h3>
-                
-                  <p className="text-sm text-gray-600 my-2">Balance: {balanceUsdc} USDC</p>
-                  <div className="flex items-center mb-2">
-                    <input
-                      type="text"
-                      placeholder="USDC Amount"
-                      value={mintAmount}
-                      onChange={(e) => setMintAmount(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded-l text-center"
-                      disabled={isProcessing}
-                    />
-                    <span className="p-2 border border-gray-300 border-l-0 rounded-r text-gray-500 bg-gray-100">USDC</span>
-                  </div>
-                  <button onClick={mint} className="w-full bg-blue-500 text-white p-2 rounded" disabled={isProcessing}>Mint PepeUSD</button>
-                </div>
-                <div className="bg-gray-50 pb-4 px-4 rounded-lg">
-                  <h3 className="text-4xl font-semibold">Redeem</h3>
+        {/* Enhanced hero section */}
+        <div className="relative overflow-hidden p-6 mb-6">
           
-                  <p className="text-sm text-gray-600 my-2">Balance: {balancePepe} PepeUSD</p>
-                  <div className="flex items-center mb-2">
-                  <input
-                    type="text"
-                    placeholder="PepeUSD Amount"
-                    value={redeemAmount}
-                    onChange={(e) => setRedeemAmount(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-l text-center"
-                    disabled={isProcessing}
-                  />
-                  <span className="p-2 border border-gray-300 border-l-0 rounded-r text-gray-500 bg-gray-100">PepeUSD</span>
-                  </div>
-                  <button onClick={redeem} className="w-full bg-green-500 text-white p-2 rounded" disabled={isProcessing}>Redeem USDC</button>
+          {/* Content */}
+          <div className="relative flex flex-col lg:flex-row items-center justify-between gap-6">
+            {/* Left section: Logo and branding */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+              {/* Logo */}
+              <img 
+                src="PEPEUSD.png" 
+                alt="PepeUSD" 
+                className="w-32 h-32 mx-auto sm:mx-0"
+              />
+              
+              {/* Branding info */}
+              <div className="text-center sm:text-left">
+                <h1 className="text-2xl lg:text-3xl font-bold text-gray-800 mb-1">
+                  PepeUSD
+                </h1>
+                                <div className="flex flex-col items-center sm:items-start gap-2">
+                  <span className="inline-flex items-center text-md text-gray-600 font-semibold">
+                    Mint • Redeem • Stake
+                  </span>
+                  <a 
+                    href={`https://etherscan.io/address/${PEPEUSD_ADDRESS}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-block bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full cursor-pointer transition-colors"
+                  >
+                    Contract Address
+                  </a>
                 </div>
               </div>
             </div>
-          </>
-        )}
+
+            {/* Right section: Supply metrics with cards */}
+            <div className="flex flex-col sm:flex-row gap-4 lg:gap-6">
+              {/* Current supply card */}
+              <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-gray-300 shadow-lg min-w-[160px]">
+                <div className="text-center">
+                  <p className="text-xs font-medium text-gray-600 mb-1 uppercase tracking-wide">Current Supply</p>
+                  <p className="text-2xl lg:text-3xl font-bold text-green-600">
+                    {Number(totalSupply).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">PepeUSD</p>
+                </div>
+              </div>
+
+              {/* Progress and stats card */}
+              <div className="bg-white/70 backdrop-blur-sm rounded-xl p-4 border border-gray-300 shadow-lg min-w-[160px]">
+                <div className="text-center">
+                  <p className="text-xs font-medium text-gray-600 mb-2 uppercase tracking-wide">Minted Progress</p>
+                  
+                  {/* Progress bar */}
+                  <div className="w-full bg-gray-200 rounded-full h-2 mb-2 overflow-hidden">
+                    <div 
+                      className="h-2 bg-green-500 rounded-full transition-all duration-1000 ease-out"
+                      style={{ width: `${Math.min((totalSupply / 420000) * 100, 100)}%` }}
+                    ></div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="font-semibold text-green-600">
+                      {(totalSupply / 420000 * 100).toFixed(1)}%
+                    </span>
+                    <span className="text-gray-500">
+                      of 420K max
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> 
+        
+        
+        <div className="relative">
+          {status && (
+            <div className="absolute z-20 flex flex-col justify-center items-center h-full w-full bg-gray-800 bg-opacity-80 text-white rounded-lg">
+              <p>{status}</p>
+              {isProcessing ? (<Spinner />) : (<div className="text-white underline cursor-pointer mt-4" onClick={() => setStatus('')}>Click to continue...</div>)}
+            </div>
+          )}
+          <div className={`grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4 bg-gray-50 p-4 rounded-lg w-full h-full ${status ? 'blur-sm' : ''}`}>
+           
+            <div className="bg-gray-50 pb-4 px-4 rounded-lg">
+              <h3 className="text-4xl font-semibold">Mint</h3>
+            <p className="text-xs text-gray-600 my-2">1 PepeUSD for every 1 USDC</p>
+              <p className="text-md text-gray-600 my-2">
+                Balance: {walletAddress ? balanceUsdc : '0.00'} USDC
+              </p>
+              <div className="flex items-center mb-2">
+                <input
+                  type="text"
+                  placeholder="USDC Amount"
+                  value={mintAmount}
+                  onChange={(e) => setMintAmount(e.target.value)}
+                  className={`w-full p-2 border border-gray-300 rounded-l text-center ${!walletAddress ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                  disabled={isProcessing || !walletAddress}
+                />
+                <span className="p-2 border border-gray-300 border-l-0 rounded-r text-gray-500 bg-gray-100">USDC</span>
+              </div>
+              <button 
+                onClick={mint} 
+                className={`w-full p-2 rounded ${walletAddress ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`} 
+                disabled={isProcessing || !walletAddress}
+              >
+                {walletAddress ? 'Mint PepeUSD' : 'Connect Wallet to Mint'}
+              </button>
+            </div>
+            
+            <div className="bg-gray-50 pb-4 px-4 rounded-lg">
+              <h3 className="text-4xl font-semibold">Redeem</h3>
+              <p className="text-xs text-gray-600 my-2">1 USDC for every 1 PepeUSD</p>
+              <p className="text-md text-gray-600 my-2">
+                Balance: {walletAddress ? balancePepe : '0.00'} PepeUSD
+              </p>
+              <div className="flex items-center mb-2">
+              <input
+                type="text"
+                placeholder="PepeUSD Amount"
+                value={redeemAmount}
+                onChange={(e) => setRedeemAmount(e.target.value)}
+                className={`w-full p-2 border border-gray-300 rounded-l text-center ${!walletAddress ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                disabled={isProcessing || !walletAddress}
+              />
+              <span className="p-2 border border-gray-300 border-l-0 rounded-r text-gray-500 bg-gray-100">PepeUSD</span>
+              </div>
+              <button 
+                onClick={redeem} 
+                className={`w-full p-2 rounded ${walletAddress ? 'bg-green-500 hover:bg-green-600 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`} 
+                disabled={isProcessing || !walletAddress}
+              >
+                {walletAddress ? 'Redeem USDC' : 'Connect Wallet to Redeem'}
+              </button>
+            </div>
+            
+            <div className="bg-gray-50 pb-4 px-4 rounded-lg">
+              <h3 className="text-4xl font-semibold">Stake</h3>
+              <p className="text-xs text-gray-600 my-2">Earn {Number(stakeAPR).toFixed(2)}% APR</p>
+              <p className="text-md text-gray-600 my-2">
+                Balance: {walletAddress ? balancePepe : '0.00'} PepeUSD
+              </p>
+              <div className="flex items-center mb-2">
+              <input
+                type="text"
+                placeholder="PepeUSD Amount"
+                value={stakeAmount}
+                onChange={(e) => setStakeAmount(e.target.value)}
+                className={`w-full p-2 border border-gray-300 rounded-l text-center ${!walletAddress ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                disabled={isProcessing || !walletAddress}
+              />
+              <span className="p-2 border border-gray-300 border-l-0 rounded-r text-gray-500 bg-gray-100">PepeUSD</span>
+              </div>
+              <button 
+                onClick={stake} 
+                className={`w-full p-2 rounded ${walletAddress ? 'bg-purple-500 hover:bg-purple-600 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`} 
+                disabled={isProcessing || !walletAddress}
+              >
+                {walletAddress ? 'Stake PepeUSD' : 'Connect Wallet to Stake'}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
+      
+      {/* Uniswap button outside white background */}
+      <div className="text-center mt-12 mb-4">
+        <a href="https://app.uniswap.org/swap?outputCurrency=0xed7fd16423Bc19b9143313ac5E4B7F731D714e97&inputCurrency=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&chain=ethereum" target="_blank" rel="noopener noreferrer" className="bg-[#FF37C7] text-white text-lg font-semibold px-4 py-2 rounded-lg cursor-pointer hover:bg-[#E02FB5] transition-colors">
+          Buy & Sell on Uniswap
+        </a>
+      </div>
+      
       <div className="text-center text-red-500 mt-4">{walletStatus}</div>
       <div className="text-center mt-4 flex justify-center mt-2">
         <a href="https://github.com/loon3/pepeusd-ui" target="_blank" rel="noopener noreferrer" className="mx-2">
