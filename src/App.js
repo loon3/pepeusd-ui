@@ -339,7 +339,7 @@ function App() {
                   <p className="text-xs font-medium text-gray-600 mb-2 uppercase tracking-wide">Minted Progress</p>
                   
                   {/* Progress bar */}
-                  <div className="w-full bg-gray-200 rounded-full h-2 mb-2 overflow-hidden">
+                  <div className="w-full bg-gray-200 rounded-full h-2 mt-5 mb-2 overflow-hidden">
                     <div 
                       className="h-2 bg-green-500 rounded-full transition-all duration-1000 ease-out"
                       style={{ width: `${Math.min((totalSupply / 420000) * 100, 100)}%` }}
